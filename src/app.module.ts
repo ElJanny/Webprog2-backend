@@ -7,6 +7,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/user/entities/user.entity';
 import { Job } from './modules/job/entities/job.entity';
 import { AuthModule } from './modules/auth/auth.module';
+import { ImageModule } from './modules/image/image.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { Image } from './modules/image/entities/image.entity'
 
 @Module({
   imports: [UserModule, JobModule,
@@ -16,11 +19,12 @@ import { AuthModule } from './modules/auth/auth.module';
       port: 5432,
       username: 'postgres',
       password: 'admin',
-      database: 'angular-php',
-      entities: [User,Job],
+      database: 'php-angular',
+      entities: [User,Job,Image],
       synchronize: true,
     }),
-    AuthModule,],
+    AuthModule,
+    ImageModule,],
   controllers: [AppController],
   providers: [AppService],
 })

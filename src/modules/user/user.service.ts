@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Job } from '../job/entities/job.entity';
 import { job_process } from '../job/entities/job_process.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,6 +12,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Job)
+    private JobRepository: Repository<Job>
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -39,12 +42,38 @@ export class UserService {
     if(updateUserDto.points){
       user.points+=updateUserDto.points
     }
-    console.log(user.points)
+    if(updateUserDto.titleImageId){
+      user.titleImageId = updateUserDto.titleImageId
+    }
     return await this.usersRepository.save(user)
   }
 
   async remove(id: number) {
     await this.usersRepository.delete(id);
+  }
+
+  async removeJob(id: number, updateUserDto: UpdateUserDto){
+    let user= await this.usersRepository.findOne(+id)
+    if(updateUserDto.current_jobs){
+      updateUserDto.current_jobs.process=job_process.FREE
+      console.log(updateUserDto)
+      let job: Job
+      user.current_jobs.forEach(element =>{
+        if (element.id==updateUserDto.current_jobs.id){
+          job= element
+        }
+      })
+      const index = user.current_jobs.indexOf(job, 0);
+      if (index > -1) {
+        user.current_jobs[index].process= job_process.FREE
+        user.current_jobs.splice(index, 1);
+      }   
+      job.process = job_process.FREE
+      await this.JobRepository.save(job)
+    }
+      
+    return await this.usersRepository.save(user)
+  
   }
 
   async findByUsername(username:string){

@@ -1,5 +1,6 @@
+import { Image } from "src/modules/image/entities/image.entity";
 import { Job } from "src/modules/job/entities/job.entity";
-import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
 export class User {
@@ -17,6 +18,9 @@ export class User {
 
     @OneToMany(type => Job, job=> job.user,{eager: true,cascade: true})
     current_jobs: Job[]
+
+    @OneToOne(type => Image, image => image.user, {eager: true, cascade: true})
+    titleImageId: Image
 
     @Column()
     jobs_done: number;

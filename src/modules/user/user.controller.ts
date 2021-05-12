@@ -13,7 +13,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  //@UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.userService.findAll();
@@ -30,6 +30,13 @@ export class UserController {
     return this.userService.update(+req.user.LoginId, updateUserDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('removejob')
+  removeJob(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.removeJob(+req.user.LoginId, updateUserDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
